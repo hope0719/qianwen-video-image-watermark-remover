@@ -1,0 +1,10 @@
+# 缓存与编译产物
+__pycache__/
+*.pyc
+.ruff_cache/
+
+# 系统文件
+.DS_Store
+
+# 示例图片（体积较大，不纳入仓库；运行工具可自行生成）
+qianwen_images/
