@@ -10,3 +10,6 @@ __pycache__/
 qianwen_images/
 # 运行输出（图片 / 视频下载产物）
 output/
+
+# 本地工作记忆（非工具内容）
+.workbuddy/
