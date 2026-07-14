@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-千问图片去水印 — 命令行工具
+千问视频图片去水印 — 命令行工具
 
 用法:
   python run.py <千问分享链接> [输出目录]
 
 示例:
   python run.py "https://activity.qianwen.com/r/ai-studio-mobile/qwen-external-share?shareId=xxx"
-  python run.py "https://www.qianwen.com/share/chat/abc123?biz_id=ai_qwen" ./my_images
+  python run.py "https://www.qianwen.com/share/chat/abc123?biz_id=ai_qwen" ./my_output
 """
 
 import asyncio
@@ -17,7 +17,7 @@ import os
 # 确保能 import 同目录下的模块
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from qianwen_remover import parse_qianwen, download_images
+from qianwen_remover import parse_qianwen, download_media
 
 
 async def main():
@@ -41,21 +41,26 @@ async def main():
     print(f"正在解析链接: {url[:80]}...")
 
     try:
-        images = await parse_qianwen(url)
+        result = await parse_qianwen(url)
     except Exception as e:
         print(f"解析失败: {e}")
         sys.exit(1)
 
-    if not images:
-        print("未找到图片")
+    title = result.get("title", "未知")
+    img_count = len(result["images"])
+    vid_count = len(result["videos"])
+
+    print(f"标题: {title}")
+    print(f"找到 {img_count} 张无水印图片, {vid_count} 个无水印视频\n")
+
+    if img_count == 0 and vid_count == 0:
+        print("未找到媒体内容")
         sys.exit(1)
 
-    print(f"共找到 {len(images)} 张无水印图片\n")
     print("开始下载:")
+    saved = download_media(result, output_dir=output_dir)
 
-    saved = download_images(images, output_dir=output_dir)
-
-    print(f"\n完成！{len(saved)} 张图片已保存到: {output_dir}")
+    print(f"\n完成！{len(saved)} 个文件已保存到: {output_dir}")
 
 
 if __name__ == "__main__":
